@@ -1,11 +1,15 @@
 package com.marco.api.sensor.model;
 
 import com.sun.istack.NotNull;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
+@Getter
+@Setter
 @Entity
 @Table(name = "temperature")
 public class Temperature {
@@ -21,6 +25,14 @@ public class Temperature {
 
     @Column(name = "value", nullable = false, updatable = false)
     @NotNull
-    private Double value = 0.0;
+    private Double value;
 
+
+    @Override
+    public String toString() {
+        return "{ id: '" + id + "\'," +
+                " timestamp:'" + timestamp + "\'," +
+                " value:'" + value + "\'" +
+                "}";
+    }
 }

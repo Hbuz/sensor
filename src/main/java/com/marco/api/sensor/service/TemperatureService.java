@@ -1,13 +1,17 @@
 package com.marco.api.sensor.service;
 
-import com.marco.api.sensor.dto.TemperatureDTO;
+import com.marco.api.sensor.dto.AggregateRespDTO;
 import com.marco.api.sensor.dto.TemperatureReqDTO;
+import com.marco.api.sensor.dto.TemperatureRespDTO;
+import com.marco.api.sensor.exception.AggregateType;
 
 import java.util.List;
 
 public interface TemperatureService {
 
-    String saveTemperature(TemperatureReqDTO reqDTO);
+    TemperatureRespDTO saveTemperature(TemperatureReqDTO reqDTO);
 
-    List<TemperatureDTO> retrieveTemperatureData();
+    List<TemperatureRespDTO> saveTemperatureBulk(List<TemperatureReqDTO> reqDTO);
+
+    AggregateRespDTO retrieveTemperatureData(AggregateType aggregateType);
 }
