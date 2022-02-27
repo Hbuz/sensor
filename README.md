@@ -43,7 +43,7 @@ java -jar target/*.jar
 ### Endpoints implemented
 * Save temperature data
 ```
-POST - http://localhost:8080/api/v1/temperature
+POST - http://localhost:8080/api/temperature
 
 The body is different depending on the type or request: single value or bulk of values
 
@@ -71,15 +71,21 @@ The body is different depending on the type or request: single value or bulk of 
 
 * Retrieve the aggregated temperature data
 ```
-GET - http://localhost:8080/api/v1/temperature?mode=HOUR
+GET - http://localhost:8080/api/temperature?mode=HOUR
 
 * The request parameter must be one of: HOUR , DAY
 ```
 
 
-I also added a postman collection that can be imported and used in Postman to test the application: 
+### Postman
+A postman collection has been added to the root project. It can be imported and used in Postman to test the application: 
 
 ```Sensor API.postman_collection.json```
 
+
+### Swagger Docs
+```
+http://localhost:8080/swagger-ui.html#/
+```
 
 
