@@ -22,6 +22,11 @@ git clone git@github.com:Hbuz/sensor.git
 cd sensor
 ```
 
+* Change folder mode
+```
+chmod +x mvnw
+```
+
 * Creating an executable JAR
 Execute this command from the root project:
 ```
