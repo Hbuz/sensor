@@ -5,8 +5,8 @@ import com.marco.api.sensor.dto.TemperatureReqDTO;
 import com.marco.api.sensor.dto.TemperatureRespDTO;
 import com.marco.api.sensor.exception.EmptyValueBulkException;
 import com.marco.api.sensor.exception.EmptyValueException;
-import com.marco.api.sensor.exception.NotValuesFoundException;
-import com.marco.api.sensor.model.Enums;
+import com.marco.api.sensor.exception.NoValuesFoundException;
+import com.marco.api.sensor.exception.ValueNotValidException;
 import com.marco.api.sensor.model.Temperature;
 import com.marco.api.sensor.repository.TemperatureRepository;
 import org.slf4j.Logger;
@@ -15,6 +15,8 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -82,9 +84,14 @@ public class TemperatureServiceImpl implements TemperatureService {
      * {@inheritDoc}
      */
     @Override
-    public AggregateRespDTO retrieveTemperatureData(Enums.AggregateMode aggregateMode) {
+    public AggregateRespDTO retrieveTemperatureData(AggregateRespDTO.AggregateMode aggregateMode) {
 
         LOGGER.debug("retrieveTemperatureData - aggregateType:{}", aggregateMode);
+
+        // not valid enum values are converted to null by the custom converter
+        if (aggregateMode == null) {
+            throw new ValueNotValidException("mode");
+        }
 
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime current = null;
@@ -100,14 +107,13 @@ public class TemperatureServiceImpl implements TemperatureService {
         Double value = temperatureRepository.getAggregatedTemperature(current);
 
         if (value == null) {
-            throw new NotValuesFoundException();
+            throw new NoValuesFoundException();
         }
 
-        AggregateRespDTO aggregateRespDTO = new AggregateRespDTO();
-        aggregateRespDTO.setAggregateMode(aggregateMode);
-        aggregateRespDTO.setTimestamp(current);
-        aggregateRespDTO.setValue(value);
+        return new AggregateRespDTO(aggregateMode, current, getRoundedDecimal(value));
+    }
 
-        return aggregateRespDTO;
+    private Double getRoundedDecimal(Double value) {
+        return new BigDecimal(value).setScale(1, RoundingMode.HALF_UP).doubleValue();
     }
 }

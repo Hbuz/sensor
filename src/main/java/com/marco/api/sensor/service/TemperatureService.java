@@ -3,7 +3,6 @@ package com.marco.api.sensor.service;
 import com.marco.api.sensor.dto.AggregateRespDTO;
 import com.marco.api.sensor.dto.TemperatureReqDTO;
 import com.marco.api.sensor.dto.TemperatureRespDTO;
-import com.marco.api.sensor.model.Enums;
 
 import java.util.List;
 
@@ -34,5 +33,5 @@ public interface TemperatureService {
      * @param aggregateMode Specifies the temperature aggregation mode
      * @return The aggregated temperature value with timestamp and mode
      */
-    AggregateRespDTO retrieveTemperatureData(Enums.AggregateMode aggregateMode);
+    AggregateRespDTO retrieveTemperatureData(AggregateRespDTO.AggregateMode aggregateMode);
 }

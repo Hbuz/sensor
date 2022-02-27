@@ -4,7 +4,10 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marco.api.sensor.dto.AggregateRespDTO;
 import com.marco.api.sensor.dto.TemperatureReqDTO;
-import com.marco.api.sensor.model.Enums;
+import com.marco.api.sensor.exception.EmptyValueBulkException;
+import com.marco.api.sensor.exception.EmptyValueException;
+import com.marco.api.sensor.exception.NoValuesFoundException;
+import com.marco.api.sensor.exception.ValueNotValidException;
 import com.marco.api.sensor.service.TemperatureService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,7 +23,7 @@ import java.util.List;
  * Controller to handle temperature measurements
  */
 @RestController
-@RequestMapping("/api/v1/temperature")
+@RequestMapping("/api/temperature")
 public class TemperatureController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TemperatureController.class);
@@ -47,14 +50,21 @@ public class TemperatureController {
         ObjectMapper mapper = new ObjectMapper();
         mapper.findAndRegisterModules();
 
-        if (reqDTO instanceof Collection<?>) {
-            List<TemperatureReqDTO> temperatureList = mapper.convertValue(reqDTO, new TypeReference<>() {
-            });
-            return new ResponseEntity<>(temperatureService.saveTemperatureBulk(temperatureList), HttpStatus.OK);
+        try {
 
-        } else {
-            TemperatureReqDTO temperature = mapper.convertValue(reqDTO, TemperatureReqDTO.class);
-            return new ResponseEntity<>(temperatureService.saveTemperature(temperature), HttpStatus.OK);
+            if (reqDTO instanceof Collection<?>) {
+                List<TemperatureReqDTO> temperatureList = mapper.convertValue(reqDTO, new TypeReference<>() {
+                });
+                return new ResponseEntity<>(temperatureService.saveTemperatureBulk(temperatureList), HttpStatus.OK);
+
+            } else {
+                TemperatureReqDTO temperature = mapper.convertValue(reqDTO, TemperatureReqDTO.class);
+                return new ResponseEntity<>(temperatureService.saveTemperature(temperature), HttpStatus.OK);
+            }
+        } catch (EmptyValueException  | EmptyValueBulkException e) {
+            LOGGER.error("Failed saveTemperature request. Message:{}", e.getMessage());
+
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
 
@@ -65,11 +75,21 @@ public class TemperatureController {
      * @return The aggregated data with mode and timestamp
      */
     @GetMapping
-    public ResponseEntity<AggregateRespDTO> retrieveTemperatureData(@RequestParam("mode") Enums.AggregateMode aggregateMode) {
+    public ResponseEntity<Object> retrieveTemperatureData(
+            @RequestParam(value = "mode", required = false) AggregateRespDTO.AggregateMode aggregateMode) {
 
         LOGGER.debug("retrieveTemperatureData - aggregateMode:{}", aggregateMode);
 
-        AggregateRespDTO response = temperatureService.retrieveTemperatureData(aggregateMode);
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        try {
+            AggregateRespDTO response = temperatureService.retrieveTemperatureData(aggregateMode);
+
+            return new ResponseEntity<>(response, HttpStatus.OK);
+
+        } catch (ValueNotValidException | NoValuesFoundException e) {
+
+            LOGGER.error("Failed retrieveTemperatureData request. Message:{}", e.getMessage());
+
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
     }
 }

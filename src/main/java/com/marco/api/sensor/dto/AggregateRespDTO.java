@@ -1,7 +1,7 @@
 package com.marco.api.sensor.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.marco.api.sensor.model.Enums;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -12,14 +12,23 @@ import java.time.LocalDateTime;
  */
 @Getter
 @Setter
+@AllArgsConstructor
 public class AggregateRespDTO {
 
     @JsonProperty("aggregate_mode")
-    private Enums.AggregateMode aggregateMode;
+    private AggregateMode aggregateMode;
 
     @JsonProperty("timestamp")
     private LocalDateTime timestamp;
 
     @JsonProperty("value")
     private Double value;
+
+
+    /**
+     * Enum to specify the  aggregation type
+     */
+    public static enum AggregateMode {
+        HOUR, DAY
+    }
 }

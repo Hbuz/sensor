@@ -19,7 +19,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "[\n    {\n    \t\"timestamp\": \"2022-02-27T10:39:44\",\n        \"value\": 21.2\n    },\n    {\n    \t\"timestamp\": \"2022-02-27T19:44\",\n        \"value\": 18.7\n    },\n    {\n    \t\"timestamp\": \"2022-02-27T19:50\",\n        \"value\": 15.2\n    }\n]",
+					"raw": "[\n    {\n    \t\"timestamp\": \"2022-02-27T10:39:12\",\n        \"value\": 21.2\n    },\n    {\n    \t\"timestamp\": \"2022-02-27T19:44:32\",\n        \"value\": 18.7\n    },\n    {\n    \t\"timestamp\": \"2022-02-27T19:50:11\",\n        \"value\": 15.2\n    }\n]",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -27,7 +27,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:8080/api/v1/temperature",
+					"raw": "http://localhost:8080/api/temperature",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -35,7 +35,6 @@
 					"port": "8080",
 					"path": [
 						"api",
-						"v1",
 						"temperature"
 					]
 				}
@@ -64,7 +63,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:8080/api/v1/temperature",
+					"raw": "http://localhost:8080/api/temperature",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -72,7 +71,6 @@
 					"port": "8080",
 					"path": [
 						"api",
-						"v1",
 						"temperature"
 					]
 				}
@@ -104,7 +102,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:8080/api/v1/temperature?mode=DAY",
+					"raw": "http://localhost:8080/api/temperature?mode=DAY",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -112,7 +110,6 @@
 					"port": "8080",
 					"path": [
 						"api",
-						"v1",
 						"temperature"
 					],
 					"query": [
