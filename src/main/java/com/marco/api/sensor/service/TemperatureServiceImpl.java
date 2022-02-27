@@ -3,6 +3,9 @@ package com.marco.api.sensor.service;
 import com.marco.api.sensor.dto.AggregateRespDTO;
 import com.marco.api.sensor.dto.TemperatureReqDTO;
 import com.marco.api.sensor.dto.TemperatureRespDTO;
+import com.marco.api.sensor.exception.EmptyValueBulkException;
+import com.marco.api.sensor.exception.EmptyValueException;
+import com.marco.api.sensor.exception.NotValuesFoundException;
 import com.marco.api.sensor.model.Enums;
 import com.marco.api.sensor.model.Temperature;
 import com.marco.api.sensor.repository.TemperatureRepository;
@@ -39,14 +42,18 @@ public class TemperatureServiceImpl implements TemperatureService {
 
         LOGGER.debug("saveTemperature - temperatureReqDTO:{}", temperatureReqDTO);
 
+        if (temperatureReqDTO.getValue() == null) {
+            throw new EmptyValueException();
+        }
+
         Temperature temperature = new Temperature();
         temperature.setValue(temperatureReqDTO.getValue());
         temperature.setTimestamp(temperatureReqDTO.getTimestamp());
-
         temperature = temperatureRepository.save(temperature);
 
         TemperatureRespDTO temperatureRespDTO = new TemperatureRespDTO();
         BeanUtils.copyProperties(temperature, temperatureRespDTO);
+
         return temperatureRespDTO;
     }
 
@@ -58,12 +65,14 @@ public class TemperatureServiceImpl implements TemperatureService {
 
         LOGGER.debug("saveTemperatureBulk - temperatureList:{}", temperatureList);
 
+        if (temperatureList == null || temperatureList.isEmpty()) {
+            throw new EmptyValueBulkException();
+        }
+
         TemperatureRespDTO temperatureRespDTO;
         List<TemperatureRespDTO> respList = new ArrayList<>();
         for (TemperatureReqDTO temperature : temperatureList) {
             temperatureRespDTO = this.saveTemperature(temperature);
-//            TemperatureRespDTO temperatureRespDTO = new TemperatureRespDTO();
-//            BeanUtils.copyProperties(temperature, temperatureRespDTO);
             respList.add(temperatureRespDTO);
         }
         return respList;
@@ -89,6 +98,10 @@ public class TemperatureServiceImpl implements TemperatureService {
         }
 
         Double value = temperatureRepository.getAggregatedTemperature(current);
+
+        if (value == null) {
+            throw new NotValuesFoundException();
+        }
 
         AggregateRespDTO aggregateRespDTO = new AggregateRespDTO();
         aggregateRespDTO.setAggregateMode(aggregateMode);
