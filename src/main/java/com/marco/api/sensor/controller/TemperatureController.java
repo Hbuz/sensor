@@ -4,8 +4,10 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.marco.api.sensor.dto.AggregateRespDTO;
 import com.marco.api.sensor.dto.TemperatureReqDTO;
-import com.marco.api.sensor.exception.AggregateType;
+import com.marco.api.sensor.model.Enums;
 import com.marco.api.sensor.service.TemperatureService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,9 +16,14 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Collection;
 import java.util.List;
 
+/**
+ * Controller to handle temperature measurements
+ */
 @RestController
 @RequestMapping("/api/v1/temperature")
 public class TemperatureController {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(TemperatureController.class);
 
     private final TemperatureService temperatureService;
 
@@ -25,28 +32,44 @@ public class TemperatureController {
         this.temperatureService = temperatureService;
     }
 
+    /**
+     * Saves temperature measurement taking into account that the request can be a single measurement, or multiple
+     * measurements sent in bulk
+     *
+     * @param reqDTO The request DTO that can be a single measurement or multiple in bulk
+     * @return The measurement (or multiple) stored with id and timestamp
+     */
     @PostMapping
-    public ResponseEntity<String> saveTemperature(@RequestBody Object reqDTO) {
-        String response;
+    public ResponseEntity<Object> saveTemperature(@RequestBody Object reqDTO) {
+
+        LOGGER.debug("saveTemperature - reqDTO:{}", reqDTO);
 
         ObjectMapper mapper = new ObjectMapper();
+        mapper.findAndRegisterModules();
 
         if (reqDTO instanceof Collection<?>) {
             List<TemperatureReqDTO> temperatureList = mapper.convertValue(reqDTO, new TypeReference<>() {
             });
-            response = temperatureService.saveTemperatureBulk(temperatureList).toString();
+            return new ResponseEntity<>(temperatureService.saveTemperatureBulk(temperatureList), HttpStatus.OK);
 
         } else {
             TemperatureReqDTO temperature = mapper.convertValue(reqDTO, TemperatureReqDTO.class);
-            response = temperatureService.saveTemperature(temperature).toString();
+            return new ResponseEntity<>(temperatureService.saveTemperature(temperature), HttpStatus.OK);
         }
-
-        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    /**
+     * Retrieves the aggregated data depending on the aggregation mode
+     *
+     * @param aggregateMode The aggregation mode.It can be hourly or daily
+     * @return The aggregated data with mode and timestamp
+     */
     @GetMapping
-    public ResponseEntity<AggregateRespDTO> retrieveTemperatureData(AggregateType aggregateType) {
-        AggregateRespDTO response = temperatureService.retrieveTemperatureData(aggregateType);
+    public ResponseEntity<AggregateRespDTO> retrieveTemperatureData(@RequestParam("mode") Enums.AggregateMode aggregateMode) {
+
+        LOGGER.debug("retrieveTemperatureData - aggregateMode:{}", aggregateMode);
+
+        AggregateRespDTO response = temperatureService.retrieveTemperatureData(aggregateMode);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

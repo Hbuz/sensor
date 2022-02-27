@@ -6,9 +6,12 @@ import lombok.Setter;
 
 import java.time.LocalDateTime;
 
+/**
+ * The temperature response DTO used on save operation
+ */
 @Getter
 @Setter
-public class TemperatureRespDTO {
+public class TemperatureRespDTO extends CiaoDTO {
 
     @JsonProperty("id")
     private Integer id;

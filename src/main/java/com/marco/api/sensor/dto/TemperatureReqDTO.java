@@ -4,10 +4,26 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
+/**
+ * The temperature request DTO containing the value measured
+ */
 @Getter
 @Setter
 public class TemperatureReqDTO {
 
     @JsonProperty("value")
     private Double value;
+
+    @JsonProperty("timestamp")
+    private LocalDateTime timestamp = LocalDateTime.now();
+
+
+    @Override
+    public String toString() {
+        return "{ value: '" + value + "\'," +
+                "  timestamp: '" + value + "\'" +
+                "}";
+    }
 }
