@@ -7,14 +7,14 @@ import com.marco.api.sensor.dto.TemperatureRespDTO;
 import com.marco.api.sensor.exception.NoValuesFoundException;
 import com.marco.api.sensor.exception.ValueNotValidException;
 import com.marco.api.sensor.service.TemperatureService;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
@@ -29,7 +29,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 @WebMvcTest(TemperatureController.class)
 public class TemperatureControllerTest {
 
@@ -47,7 +47,7 @@ public class TemperatureControllerTest {
     private TemperatureRespDTO respDTO;
     private List<TemperatureReqDTO> bulkReqDTO;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         reqDTO1 = new TemperatureReqDTO();
         reqDTO1.setValue(19.3);

@@ -9,22 +9,21 @@ import com.marco.api.sensor.exception.NoValuesFoundException;
 import com.marco.api.sensor.exception.ValueNotValidException;
 import com.marco.api.sensor.model.Temperature;
 import com.marco.api.sensor.repository.TemperatureRepository;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@SpringBootTest
 public class TemperatureServiceTest {
 
     @Mock
@@ -43,7 +42,7 @@ public class TemperatureServiceTest {
 
     private AggregateRespDTO aggregateRespDTO;
 
-    @Before
+    @BeforeEach
     public void setUp() {
 
         temperature1 = new Temperature();
@@ -80,10 +79,12 @@ public class TemperatureServiceTest {
         assertEquals(temperatureReqDTO1.getValue(), saved.getValue().doubleValue(), 0.1);
     }
 
-    @Test(expected = EmptyValueException.class)
+    @Test
     public void whenSaveTemperature_andInputIsNotValid_thenTriggerException() {
 
-       temperatureService.saveTemperature(temperatureReqDTO2);
+        EmptyValueException thrown = assertThrows(EmptyValueException.class,
+                () -> temperatureService.saveTemperature(temperatureReqDTO2));
+        assertTrue(thrown.getMessage().contains("The temperature value is empty"));
     }
 
     @Test
@@ -95,22 +96,28 @@ public class TemperatureServiceTest {
         assertEquals(2, saved.size());
     }
 
-    @Test(expected = EmptyValueException.class)
+    @Test
     public void whenSaveTemperatureInBulk_andInputIsNotValid_thenTriggerException() {
 
-        temperatureService.saveTemperatureBulk(temperatureReqDTOList2);
+        EmptyValueException thrown = assertThrows(EmptyValueException.class,
+                () -> temperatureService.saveTemperatureBulk(temperatureReqDTOList2));
+        assertTrue(thrown.getMessage().contains("The temperature value is empty"));
     }
 
-    @Test(expected = EmptyValueBulkException.class)
+    @Test
     public void whenSaveTemperatureInBulk_andInputEmptyList_thenTriggerException() {
 
-        temperatureService.saveTemperatureBulk(new ArrayList<>());
+        EmptyValueBulkException thrown = assertThrows(EmptyValueBulkException.class,
+                () -> temperatureService.saveTemperatureBulk(new ArrayList<>()));
+        assertTrue(thrown.getMessage().contains("The temperature values bulk is empty"));
     }
 
-    @Test(expected = EmptyValueBulkException.class)
+    @Test
     public void whenSaveTemperatureInBulk_andInputNull_thenTriggerException() {
 
-        temperatureService.saveTemperatureBulk(null);
+        EmptyValueBulkException thrown = assertThrows(EmptyValueBulkException.class,
+                () -> temperatureService.saveTemperatureBulk(null));
+        assertTrue(thrown.getMessage().contains("The temperature values bulk is empty"));
     }
 
     @Test
@@ -137,16 +144,20 @@ public class TemperatureServiceTest {
         assertEquals(LocalDateTime.now().toLocalDate().atTime(currentHour, 0), data.getTimestamp());
     }
 
-    @Test(expected = NoValuesFoundException.class)
+    @Test
     public void whenRetrieveTemperature_andParamIsHour_andNoValuesFound_thenTriggerException() {
 
         when(temperatureRepository.getAggregatedTemperature(any(LocalDateTime.class))).thenReturn(null);
-        temperatureService.retrieveTemperatureData(AggregateRespDTO.AggregateMode.HOUR);
+        NoValuesFoundException thrown = assertThrows(NoValuesFoundException.class,
+                () -> temperatureService.retrieveTemperatureData(AggregateRespDTO.AggregateMode.HOUR));
+        assertTrue(thrown.getMessage().contains("No temperature values found"));
     }
 
-    @Test(expected = ValueNotValidException.class)
+    @Test
     public void whenRetrieveTemperature_andParamIsNotValid_thenTriggerException() {
 
-        temperatureService.retrieveTemperatureData(null);
+        ValueNotValidException thrown = assertThrows(ValueNotValidException.class,
+                () -> temperatureService.retrieveTemperatureData(null));
+        assertTrue(thrown.getMessage().contains("The value of mode is not valid"));
     }
 }
