@@ -17,20 +17,27 @@ API to save and retrieve temperature data
 git clone git@github.com:Hbuz/sensor.git
 ```
 
-* Creating an executable JAR
-Execute this command from the root of the project:
+* Go to root project
 ```
-mvn install
+cd sensor
+```
+
+* Creating an executable JAR
+Execute this command from the root project:
+```
+./mvnw package
+```
+
+### Run the test
+Execute this command from the root project:
+```
+./mvnw test
 ```
 
 ### Run the application
-Execute this command from the root of the project:
+Execute this command from the root project:
 ```
-mvn spring-boot:run
-```
-or as a packaged jar application
-```
-java -jar target/sensor-0.0.1-SNAPSHOT.jar
+java -jar target/*.jar
 ```
 
 ### Endpoints implemented
