@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
  */
 @Getter
 @Setter
-public class TemperatureRespDTO extends CiaoDTO {
+public class TemperatureRespDTO {
 
     @JsonProperty("id")
     private Integer id;
