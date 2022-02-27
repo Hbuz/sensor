@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 
 /**
  * The temperature request DTO containing the value measured
@@ -17,7 +18,7 @@ public class TemperatureReqDTO {
     private Double value;
 
     @JsonProperty("timestamp")
-    private LocalDateTime timestamp = LocalDateTime.now();
+    private LocalDateTime timestamp = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
 
 
     @Override
